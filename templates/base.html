@@ -20,9 +20,12 @@
                         <a href="{% url 'jobs:job_list' %}" class="text-gray-700 hover:text-blue-600">Dashboard</a>
                         <a href="{% url 'jobs:job_create' %}" class="text-gray-700 hover:text-blue-600">Create Job</a>
                         <span class="text-gray-600">{{ user.username }}</span>
-                        <a href="{% url 'accounts:logout' %}" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-200">
-                            Logout
-                        </a>
+                        <form method="post" action="{% url 'accounts:logout' %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-200">
+                                Logout
+                            </button>
+                        </form>
                     {% else %}
                         <a href="{% url 'jobs:public_job_list' %}" class="text-gray-700 hover:text-blue-600">Jobs</a>
                         <a href="{% url 'accounts:login' %}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200">
@@ -56,7 +59,7 @@
     <!-- Footer -->
     <footer class="bg-white shadow-md mt-auto py-6">
         <div class="container mx-auto px-4 text-center text-gray-600">
-            <p>&copy; 2024 ATS - Applicant Tracking System</p>
+            <p>&copy; 2025 ATS - Applicant Tracking System</p>
         </div>
     </footer>
 </body>
