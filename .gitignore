@@ -1,2 +1,76 @@
 # Enivironment files
 .env
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django specific files
+db.sqlite3
+/media/
+/staticfiles/
+/static/
+                
+# VSCode settings
+.vscode/
+
+# IDE specific files
+.idea/
+*.iml
+
+# macOS specific files
+.DS_Store
+
+# Logs
+*.log
+logs/
+# Coverage reports
+htmlcov/  
+.coverage
+# Unit test / coverage reports
+.tox/
+.nox/
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Translations
+*.mo
+# Sphinx documentation
+docs/_build/
+# PyInstaller
+dist/
+build/
+# Jupyter Notebook
+.ipynb_checkpoints
+# Celery beat schedule file
+celerybeat-schedule
+# dotenv
+.env
+.venv
+env/
+venv/
+ENV/
+# Spyder project settings
+.spyderproject
+.spyproject
+# Rope project settings
+.ropeproject
+# mkdocs documentation
+/site
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+# Pyre type checker
+.pyre/
+# pytype static type analyzer
+.pytype/
+# Cython debug symbols
+cython_debug/
+# Temporary files
+*.tmp
