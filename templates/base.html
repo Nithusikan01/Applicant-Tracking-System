@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ATS - Applicant Tracking System{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md mb-8">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="{% url 'jobs:public_job_list' %}" class="text-2xl font-bold text-blue-600">
+                    ATS
+                </a>
+                
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'jobs:job_list' %}" class="text-gray-700 hover:text-blue-600">Dashboard</a>
+                        <a href="{% url 'jobs:job_create' %}" class="text-gray-700 hover:text-blue-600">Create Job</a>
+                        <span class="text-gray-600">{{ user.username }}</span>
+                        <a href="{% url 'accounts:logout' %}" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-200">
+                            Logout
+                        </a>
+                    {% else %}
+                        <a href="{% url 'jobs:public_job_list' %}" class="text-gray-700 hover:text-blue-600">Jobs</a>
+                        <a href="{% url 'accounts:login' %}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200">
+                            Recruiter Login
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container mx-auto px-4 mb-4">
+        {% for message in messages %}
+        <div class="{% if message.tags == 'success' %}bg-green-100 border border-green-400 text-green-700
+                    {% elif message.tags == 'error' %}bg-red-100 border border-red-400 text-red-700
+                    {% else %}bg-blue-100 border border-blue-400 text-blue-700{% endif %}
+                    px-4 py-3 rounded mb-2">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 pb-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white shadow-md mt-auto py-6">
+        <div class="container mx-auto px-4 text-center text-gray-600">
+            <p>&copy; 2024 ATS - Applicant Tracking System</p>
+        </div>
+    </footer>
+</body>
+</html>
