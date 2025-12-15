@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ view_user.username }} - User Details{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <a href="{% url 'users:user_list' %}" class="text-blue-600 hover:underline mb-2 inline-block">
+        ← Back to User List
+    </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">{{ view_user.get_full_name|default:view_user.username }}</h1>
+                    <p class="text-gray-600">@{{ view_user.username }}</p>
+                </div>
+                <div class="space-x-2">
+                    <a href="{% url 'users:user_update' view_user.pk %}" 
+                       class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200">
+                        Edit User
+                    </a>
+                    {% if view_user != user %}
+                        <a href="{% url 'users:user_delete' view_user.pk %}" 
+                           class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-200">
+                            Delete User
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <p class="text-sm text-gray-600">Email</p>
+                    <p class="font-medium">{{ view_user.email }}</p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-gray-600">Phone</p>
+                    <p class="font-medium">{{ view_user.profile.phone|default:"-" }}</p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-gray-600">Role</p>
+                    <p class="font-medium">{{ view_user.profile.get_role_display|default:"-" }}</p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-gray-600">Department</p>
+                    <p class="font-medium">{{ view_user.profile.department|default:"-" }}</p>
+                </div>
+                <div>
+                <p class="text-sm text-gray-600">Joined Date</p>
+                <p class="font-medium">{{ view_user.date_joined|date:"F d, Y" }}</p>
+            </div>
+
+            <div>
+                <p class="text-sm text-gray-600">Last Login</p>
+                <p class="font-medium">{{ view_user.last_login|date:"F d, Y H:i"|default:"Never" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Status & Permissions</h3>
+        
+        <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <span class="text-gray-700">Active</span>
+                {% if view_user.is_active %}
+                    <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Yes</span>
+                {% else %}
+                    <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded">No</span>
+                {% endif %}
+            </div>
+
+            <div class="flex items-center justify-between">
+                <span class="text-gray-700">Staff Status</span>
+                {% if view_user.is_staff %}
+                    <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Yes</span>
+                {% else %}
+                    <span class="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">No</span>
+                {% endif %}
+            </div>
+
+            <div class="flex items-center justify-between">
+                <span class="text-gray-700">Superuser</span>
+                {% if view_user.is_superuser %}
+                    <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded">Yes</span>
+                {% else %}
+                    <span class="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">No</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

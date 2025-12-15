@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}User Management - ATS{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-gray-800">User Management</h1>
+    <a href="{% url 'users:user_create' %}" 
+       class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200">
+        Create New User
+    </a>
+</div>
+
+{% if users %}
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for view_user in users %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">
+                                    {{ view_user.get_full_name|default:view_user.username }}
+                                    {% if view_user.is_superuser %}
+                                        <span class="ml-2 px-2 py-1 text-xs bg-red-100 text-red-800 rounded">Superuser</span>
+                                    {% endif %}
+                                    {% if view_user == user %}
+                                        <span class="ml-2 px-2 py-1 text-xs bg-green-100 text-green-800 rounded">You</span>
+                                    {% endif %}
+                                </div>
+                                <div class="text-sm text-gray-500">{{ view_user.email }}</div>
+                                <div class="text-sm text-gray-500">@{{ view_user.username }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if view_user.profile %}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                {{ view_user.profile.get_role_display }}
+                            </span>
+                        {% else %}
+                            <span class="text-gray-400">-</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {{ view_user.profile.department|default:"-" }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if view_user.is_active %}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Active
+                            </span>
+                        {% else %}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                Inactive
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {{ view_user.date_joined|date:"M d, Y" }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <a href="{% url 'users:user_detail' view_user.pk %}" class="text-blue-600 hover:underline">View</a>
+                        <a href="{% url 'users:user_update' view_user.pk %}" class="text-green-600 hover:underline">Edit</a>
+                        {% if view_user != user %}
+                            <a href="{% url 'users:user_delete' view_user.pk %}" class="text-red-600 hover:underline">Delete</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="bg-white p-8 rounded-lg shadow-md text-center">
+        <p class="text-gray-600 text-lg mb-4">No users found.</p>
+    </div>
+{% endif %}
+{% endblock %}

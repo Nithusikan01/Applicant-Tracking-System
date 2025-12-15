@@ -1,6 +1,7 @@
 # Enivironment files
 .env
-.env.*
+.env.production
+.env.development
 
 # Python cache files
 __pycache__/

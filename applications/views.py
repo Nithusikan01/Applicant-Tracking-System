@@ -1,33 +1,54 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db import transaction
 from jobs.models import Job
 from .models import Application
 from .forms import ApplicationForm, ApplicationUpdateForm
 from .services import extract_resume_text, rerank_applications
+import logging
+
+logger = logging.getLogger(__name__)
 
 
+@transaction.atomic
 def apply(request, job_pk):
-    """Public application form for a job"""
+    """
+    Public application form for a job
+    Processes resume synchronously with optimized bulk updates
+    """
     job = get_object_or_404(Job, pk=job_pk)
     
     if request.method == 'POST':
         form = ApplicationForm(request.POST, request.FILES)
         if form.is_valid():
-            application = form.save(commit=False)
-            application.job = job
-            application.save()
-            
-            # Extract resume text
-            resume_text = extract_resume_text(application.resume)
-            application.resume_text = resume_text
-            application.save(update_fields=['resume_text'])
-            
-            # Rerank all applications for this job
-            rerank_applications(job)
-            
-            messages.success(request, 'Application submitted successfully!')
-            return redirect('applications:apply_success')
+            try:
+                # Save application
+                application = form.save(commit=False)
+                application.job = job
+                application.save()
+                
+                logger.info(f"Application {application.pk} submitted for job {job.pk} by {application.email}")
+                
+                # Extract resume text synchronously
+                resume_text = extract_resume_text(application.resume)
+                application.resume_text = resume_text
+                application.save(update_fields=['resume_text'])
+                
+                # Rerank all applications for this job (bulk update)
+                rerank_applications(job)
+                
+                messages.success(request, 'Application submitted successfully!')
+                return redirect('applications:apply_success')
+                
+            except Exception as e:
+                logger.error(f"Error submitting application: {e}")
+                messages.error(
+                    request,
+                    'An error occurred while submitting your application. Please try again.'
+                )
+        else:
+            logger.warning(f"Invalid application form for job {job.pk}: {form.errors}")
     else:
         form = ApplicationForm()
     
@@ -44,15 +65,24 @@ def apply_success(request):
 
 @login_required
 def application_detail(request, pk):
-    """View and manage a specific application"""
-    application = get_object_or_404(Application, pk=pk)
+    """
+    View and manage a specific application
+    Uses select_related for optimized database queries
+    """
+    application = get_object_or_404(
+        Application.objects.select_related('job'),
+        pk=pk
+    )
     
     if request.method == 'POST':
         form = ApplicationUpdateForm(request.POST, instance=application)
         if form.is_valid():
             form.save()
+            logger.info(f"Application {pk} updated by {request.user.username}")
             messages.success(request, 'Application updated successfully!')
             return redirect('applications:application_detail', pk=application.pk)
+        else:
+            logger.warning(f"Invalid update form for application {pk}: {form.errors}")
     else:
         form = ApplicationUpdateForm(instance=application)
     
