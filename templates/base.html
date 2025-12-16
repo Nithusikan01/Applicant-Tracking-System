@@ -183,3 +183,4 @@
     </script>
 </body>
 </html>
+                        {% if user.is_superuser or user.profile and user.profile.role == 'ADMIN' %}
