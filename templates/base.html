@@ -1,14 +1,9 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ATS - Applicant Tracking System{% endblock %}</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
-    
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
@@ -23,7 +18,9 @@
                         <a href="{% url 'jobs:job_list' %}" class="text-gray-700 hover:text-blue-600 transition duration-200">Dashboard</a>
                         <a href="{% url 'jobs:job_create' %}" class="text-gray-700 hover:text-blue-600 transition duration-200">Create Job</a>
 
-                        {% if user.is_superuser or (user.profile and user.profile.role == 'ADMIN') %}
+                        {% if user.is_superuser %}
+                            <a href="{% url 'users:user_list' %}" class="text-gray-700 hover:text-blue-600 transition duration-200">Users</a>
+                        {% elif user.profile and user.profile.role == 'ADMIN' %}
                             <a href="{% url 'users:user_list' %}" class="text-gray-700 hover:text-blue-600 transition duration-200">Users</a>
                         {% endif %}
 
@@ -55,7 +52,12 @@
                                         My Profile
                                     </a>
 
-                                    {% if user.is_superuser or (user.profile and user.profile.role == 'ADMIN') %}
+                                    {% if user.is_superuser %}
+                                        <a href="{% url 'users:user_list' %}" 
+                                            class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-200">
+                                            Manage Users
+                                        </a>
+                                    {% elif user.profile and user.profile.role == 'ADMIN' %}
                                         <a href="{% url 'users:user_list' %}" 
                                             class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-200">
                                             Manage Users
@@ -129,7 +131,10 @@
                         <a href="{% url 'jobs:job_list' %}" class="text-sm text-gray-600 hover:text-blue-600">Dashboard</a>
                         <span class="text-gray-400">|</span>
                         <a href="{% url 'users:user_profile' %}" class="text-sm text-gray-600 hover:text-blue-600">Profile</a>
-                        {% if user.is_superuser or (user.profile and user.profile.role == 'ADMIN') %}
+                        {% if user.is_superuser %}
+                            <span class="text-gray-400">|</span>
+                            <a href="{% url 'users:user_list' %}" class="text-sm text-gray-600 hover:text-blue-600">Users</a>
+                        {% elif user.profile and user.profile.role == 'ADMIN' %}
                             <span class="text-gray-400">|</span>
                             <a href="{% url 'users:user_list' %}" class="text-sm text-gray-600 hover:text-blue-600">Users</a>
                         {% endif %}
@@ -183,4 +188,3 @@
     </script>
 </body>
 </html>
-                        {% if user.is_superuser or user.profile and user.profile.role == 'ADMIN' %}
