@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from decouple import config
 
@@ -126,6 +127,9 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 
 # Logging
+LOG_DIR = BASE_DIR / 'logs'
+if not LOG_DIR.exists():
+    os.makedirs(LOG_DIR)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -146,7 +150,7 @@ LOGGING = {
         },
         'file': {
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'django.log',
+            'filename': LOG_DIR / 'app.log',
             'formatter': 'verbose',
         },
     },
